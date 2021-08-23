@@ -1,13 +1,13 @@
 
 
 
-# PngToPhoton
+# PngToPhotonMonoX
 
 Quick and dirty utility I've made to convert PNG files to Anycubic Photon Mono X 3d printer file format. It could be useful for PCB production. Source code was ported to C++ from [Photon File Validator](https://github.com/Photonsters/PhotonFileValidator) project.
 
 # Usage
 
-PngToPhoton.exe <input-3840x2400.png> <output.photon>
+PngToPhotonMonoX.exe <input-3840x2400.png> <output.photon>
 
 To read data from STDIN use '-' as filename.
 To write data from STDOUT use '-' as filename.
