@@ -197,9 +197,19 @@ public:
 	uint32_t getResolutionX() const {
         return resolutionX_;
     }
+    
+    void setResolutionX(uint32_t iValue)
+    {
+        resolutionX_ = iValue;
+    }
 
 	uint32_t getResolutionY() const {
         return resolutionY_;
+    }
+    
+    void setResolutionY(uint32_t iValue)
+    {
+        resolutionY_ = iValue;
     }
 
     float getBuildAreaX() const {
@@ -208,6 +218,18 @@ public:
 
     float getBuildAreaY() const {
         return bedYmm_;
+    }
+    
+    void setBuildAreaX(float fValue) {
+        bedXmm_ = fValue;
+    }
+
+    void setBuildAreaY(float fValue) {
+        bedYmm_ = fValue;
+    }
+    
+    void setBuildAreaZ(float fValue) {
+        bedZmm_ = fValue;
     }
 
     float getLayerHeight() const {

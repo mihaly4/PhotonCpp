@@ -20,14 +20,14 @@ std::pair<std::string, PhotonLayer> png2layer(const std::string & bufferPng)
 	if (!img)
 		return {"Invalid PNG file format", res};
 
-	if (w != 1440 || h != 2560)
-		return { "Invalid PNG image size: (" + std::to_string(w) + "x" + std::to_string(h) + " instead of 1440x2560)", res };
+	if (w != 3840 || h != 2400)
+		return { "Invalid PNG image size: (" + std::to_string(w) + "x" + std::to_string(h) + " instead of 3840x2400)", res };
 
 	for (int j = 0; j < h; j++)
 		for (int i = 0; i < w; i++)
 		{
 			int pos = ((w * j) + i) * 4;
-			bool present = (img[pos + 3] != 0 /* not alpha transparent */) && (img[pos] == 0 /* probably black */);
+			bool present = (img[pos + 3] != 0 /* not alpha transparent */) && (img[pos] != 0 /* probably black */);
 			if (present)
 				res.supported(i, j);
 		}
@@ -39,11 +39,24 @@ std::pair<std::string, PhotonLayer> png2layer(const std::string & bufferPng)
 std::string getModel()
 {
 	const unsigned char gz[] = { 
-120, 94, 147, 100, 248, 43, 196, 196, 192, 192, 80, 45, 210, 225, 212, 250,
-250, 163, 19, 3, 131, 152, 51, 3, 18, 56, 123, 198, 199, 150, 129, 97,
-129, 35, 3, 3, 11, 80, 220, 193, 129, 3, 40, 183, 128, 21, 72, 112,
-49, 48, 20, 0, 169, 43, 64, 205, 204, 64, 186, 133, 145, 129, 225, 25,
-144, 1, 164, 24, 102, 0, 197, 108, 128, 98, 32, 246, 127, 134, 255, 200,
+120, 94, 147, 100,  //header1_
+248, 43, 196, 196,  //version_
+192, 192, 80, 45,   //bedXmm_
+210, 225, 212, 250, //bedYmm_
+250, 163, 19, 3,    //bedZmm_
+131, 152, 51, 3,    //unknown1_
+18, 56, 123, 198,   //unknown2_
+199, 150, 129, 97,  //unknown3_
+129, 35, 3, 3,      //layerHeightMilimeter_
+11, 80, 220, 193,   //exposureTimeSeconds_
+129, 3, 40, 183,    //exposureBottomTimeSeconds_
+128, 21, 72, 112,   //offTimeSeconds_
+49, 48, 20, 0,      //bottomLayers_
+169, 43, 64, 205,   //resolutionX_
+204, 64, 186, 133,  //resolutionY_
+145, 129, 225, 25,
+144, 1, 164, 24,
+102, 0, 197, 108, 128, 98, 32, 246, 127, 134, 255, 200,
 198, 49, 232, 2, 121, 32, 60, 1, 72, 127, 97, 192, 4, 58, 201, 219,
 140, 252, 163, 11, 189, 57, 13, 78, 71, 233, 36, 43, 24, 108, 81, 230,
 2, 179, 228, 13, 206, 121, 109, 81, 230, 52, 184, 32, 5, 18, 13, 244,
@@ -134,7 +147,7 @@ int main(int argc, char * argv[])
 {
 	if (argc != 3)
 	{
-		std::cerr << "\nUsage: PngToPhoton <input-1440x2560.png> <output.photon>\n"
+		std::cerr << "\nUsage: PngToPhoton <input-3840x2400.png> <output.photon>\n"
 		"To read data from STDIN use '-' as filename.\n"
 		"To write data to STDOUT use '-' as filename.\n\n"
 		"White and transparent areas of the image are treated as voids.\n"
@@ -150,6 +163,11 @@ int main(int argc, char * argv[])
 	std::string bufferModel = getModel();
 
 	PhotonFileHeader photonFileHeader(bufferModel);
+    photonFileHeader.setResolutionX(3840);
+    photonFileHeader.setResolutionY(2400);
+    photonFileHeader.setBuildAreaX(192.0f);
+    photonFileHeader.setBuildAreaY(120.0f);
+    photonFileHeader.setBuildAreaZ(245.0f);
 	PhotonFilePreview previewOne(photonFileHeader.getPreviewOneOffsetAddress(), bufferModel);
 	PhotonFilePreview previewTwo(photonFileHeader.getPreviewTwoOffsetAddress(), bufferModel);
 	
